@@ -20,32 +20,47 @@ typedef pair<int,int> PII;
 const int maxn = (2e5)+10;
 const int mod = (1e9)+7;
 
-int n;
-int l[maxn],dp[maxn];
+int n,x,y,ans;
+long long fact[maxn];
 string s;
 
+void init() {
+	fact[0] = 1;
+	for(int i = 1; i <= 200000; i++) 
+		fact[i] = (fact[i-1] * i) % mod;
+}
 
+long long pow_mod(long long a, long long b) {
+	if(b == 0) return 1;
+	long long temp = pow_mod(a, b>>1);
+	temp = temp * temp % mod;
+	if(b & 1) temp = temp * a % mod;
+	return temp;
+}
+
+long long C(int x,int y) {
+	long long ans = fact[x];
+	ans = ans * pow_mod(fact[y],mod-2) % mod;
+	ans = ans * pow_mod(fact[x-y],mod-2) % mod;
+	return ans;
+}
 int main()
 {
+	init();
 	cin >> s;
-	n = s.length();
-	int ans = 0;
-	for(int i = 0; i < n; i++) {
-		if(s[i] == '(') l[i+1] = l[i]+1;
-		else l[i+1] = l[i]; 
-	}
-	int all = 0;
-	int pre = 0;
-	for(int i = 1; i <= n; i++) {
-		if(s[i-1] == ')') {
-			dp[i] = (l[i]-l[pre] +  all) % mod;
-			all = (all + dp[i]) % mod;
-			pre = i;
+	x = y = 0;
+	ans = 0;
+	for(int i = 0; i < s.length(); i++) 
+		if(s[i] == ')') y++;
+	for(int i = 0; i < s.length(); i++) {
+		if(s[i] == '(') x++;
+		else {
+			if(x != 0 )
+				ans = (ans + C(x+y-1,y)) % mod;
+			// cout << "ans = " << ans << endl;
+			y--;
 		}
 	}
-	for(int i = 1; i <= n; i++) {
-		cout << "dp[" << i << "]=" << dp[i] << endl;
-	}
-	cout << all << endl;
+	cout << ans << endl;
 	return 0;
 }
