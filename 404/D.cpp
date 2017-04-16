@@ -55,10 +55,9 @@ int main()
 	for(int i = 0; i < s.length(); i++) {
 		if(s[i] == '(') x++;
 		else {
-			if(x != 0 )
-				ans = (ans + C(x+y-1,y)) % mod;
-			// cout << "ans = " << ans << endl;
 			y--;
+			if(x >= 1)
+				ans = (ans + C(y+x-1,x-1)) % mod;
 		}
 	}
 	cout << ans << endl;
