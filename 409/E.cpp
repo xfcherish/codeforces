@@ -13,74 +13,100 @@ using namespace std;
 # define pb push_back
 # define mp make_pair
 
-typedef long long LL;
+typedef long long ll;
 typedef pair<int,int> PII;
 
 const int maxn =  200005;
 
-int n,m, cur_len;
-bool vis[maxn];
-vector<int> nxt[maxn];
-vector<int> v;
-int d[maxn];
+int n,m;
+int ban[maxn],cnt[maxn],dp[maxn],pre[maxn];
+vector<int> g[maxn],d,ans;
 
-int dfs(int cur) {
-	cout << "cur = " << cur << endl;
-	vis[cur] = 1;
-	if(d[cur] != -1) return d[cur];
-	for(int i = 0; i < nxt[cur].size(); i++) {
-		int nxt_node = nxt[cur][i];
-		if(vis[nxt_node] == 0) {
-			d[cur] = max(d[cur], 1 + dfs(nxt_node));
-			vis[nxt_node] = 0;
-		}
+ll gcd(ll a, ll b) {
+	return (b == 0 ? a : gcd(b, a % b));
+}
+
+ll extend_gcd(ll a, ll b, ll &x, ll &y) {
+	if(b == 0) {
+		x = 1;
+		y = 0;
+		return a;
 	}
-	return d[cur];
+	else {
+		ll r = extend_gcd(b, a % b, y, x);
+		y -= x*(a/b);
+		return r;
+	}
+}
+
+void dfs(int cur) {
+	if(cur == -1) return;
+	for(int i = 0; i < g[d[cur]].size(); i++) {
+		ans.push_back(g[d[cur]][i]);
+	}
+	dfs(pre[cur]);
+}
+
+ll inv(ll a, ll mod) {
+	if(a == 0) return 0;
+	ll a1 = a, b1 = mod, x = 1, y = 1;
+	extend_gcd(a1, b1, x, y);
+	x = (x % mod + mod ) % mod;
+	// cout << "a = " << a << " mod = " << mod << " x = " << x << endl;
+	return x;
+}
+
+
+int from_to(int x, int y, int mod) {
+	int c = gcd(x,mod);
+	x /= c;  y /= c;  mod /= c;
+	int ans = y * inv(x, mod) % mod;
+	// cout << "x = " << x << " k = " << ans << " y = " 
+	// 	<< y << " mod = " << mod << endl;
+	return ans;
 }
 
 int main()
 {
+	// freopen("input.txt", "r", stdin);
+	// freopen("output.txt", "w", stdout);
 	int tmp;
 	cin >> n >> m;
 	for(int i = 1; i <= n; i++) {
-		scanf("%d", &tmp);
-		vis[tmp] = 1;
-	}
-	for(int i = 0; i < m ; i++) {
-		if(vis[tmp] == 0) v.push_back(i);
-	}
-	int len  = v.size();
-	cout << "len = " << len << endl;
-	for(int i = 0; i < v.size(); i++) {
-		cout << "v[" << i << "]=" << v[i] << endl;
-	}
+		cin >> tmp;
+		ban[tmp] = 1;
+	}	
 	for(int i = 0; i < m; i++) {
-		memset(vis, 0, sizeof(vis));
-		vis[i] = 1;
-		for(int j = 0; j < len; j++) {
-			long long cur = 1;
-			cur = cur * i * v[j] % m;
-			cout << "i = " << i << " v[" << j << "]=" << v[j] << endl;
-			cout << "i = " << i << " cur = " << cur << endl;
-			if(cur != i) {
-				nxt[i].push_back(cur);
+		if(ban[i] == 0) {
+			g[gcd(i,m)].push_back(i);
+			cnt[gcd(i,m)]++;
+		}
+	}
+	for(int i = 1; i <= m; i++) {
+		if(m % i == 0) 
+			d.push_back(i);
+	}
+	memset(pre, -1 , sizeof(pre));
+	for(int i = 0; i < d.size(); i++) {
+		for(int j = 0; j < i; j++) {
+			if(d[i] % d[j] == 0) {
+				if(dp[j] > dp[i]) {
+					dp[i] = dp[j];
+					pre[i] = j;
+				}
 			}
 		}
+		dp[i] += cnt[d[i]];
+		// cout << "d[" << i << "]=" << d[i] << " dp[" << i << "]=" << dp[i] << endl;
 	}
-	for(int i = 0; i < m; i++) {
-		cout << "nxt[" << i << "] size = " << nxt[i].size() << endl;
-		for(int j = 0; j < nxt[i].size(); j++) {
-			cout << nxt[i][j] << " ";
-		}
-		cout << endl;
+	cout << dp[d.size()-1] << endl;
+	dfs(d.size()-1);
+	reverse(ans.begin(), ans.end());
+	int last = 1;
+	for(int i = 0; i < ans.size(); i++) {
+		cout << from_to(last, ans[i],m) << " ";
+		last = ans[i];
 	}
-	int ans = 0;
-	memset(vis, 0, sizeof(vis));
-	for(int i = 0; i < len; i++) {
-		memset(d, -1 , sizeof(d));
-		dfs(v[i]);
-		ans = max(ans, d[v[i]]);
-	}
-	cout << ans << endl;
+	cout << endl;
 	return 0;
 }
