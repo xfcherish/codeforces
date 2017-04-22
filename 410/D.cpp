@@ -21,6 +21,6 @@ const int maxn =  (1e5)+10;
 
 int main()
 {
-	int a,b,c;
+	int a;
 	return 0;
 }
