@@ -19,19 +19,15 @@ typedef pair<int,int> PII;
 
 const int maxn =  (1e5)+10;
 
+
 int main()
 {
-	int l,r,max = 0, sub, save = 0;
-	cin >> l >> r;
-	for(int i = 2; i <= l; i++) {
-		sub = (r-l)/i;
-		if(r % i == 0) sub += 1;
-		if(sub >= max) {
-			max = sub;
-			save = i;
-		}
-		else if(max > sub) break;
+	int n;
+	cin >> n;
+	for(int i = 0; i < n; i++) {
+		if(i % 4 == 0 || i % 4 == 1) cout << "a";
+		else cout << "b";
 	}
-	cout << save << endl;
+	cout << endl;
 	return 0;
 }

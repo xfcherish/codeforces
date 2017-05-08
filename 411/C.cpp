@@ -21,17 +21,8 @@ const int maxn =  (1e5)+10;
 
 int main()
 {
-	int l,r,max = 0, sub, save = 0;
+	int l,r;
 	cin >> l >> r;
-	for(int i = 2; i <= l; i++) {
-		sub = (r-l)/i;
-		if(r % i == 0) sub += 1;
-		if(sub >= max) {
-			max = sub;
-			save = i;
-		}
-		else if(max > sub) break;
-	}
-	cout << save << endl;
+	cout << 2 << endl;
 	return 0;
 }

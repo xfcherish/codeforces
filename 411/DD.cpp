@@ -18,20 +18,24 @@ typedef long long ll;
 typedef pair<int,int> PII;
 
 const int maxn =  (1e5)+10;
+const int mod = (1e9)+7;
 
+string s;
 int main()
 {
-	int l,r,max = 0, sub, save = 0;
-	cin >> l >> r;
-	for(int i = 2; i <= l; i++) {
-		sub = (r-l)/i;
-		if(r % i == 0) sub += 1;
-		if(sub >= max) {
-			max = sub;
-			save = i;
+	cin >> s;
+	int len = s.length();
+	int cnt = 0;
+	int ans = 0;
+	for(int i = len-1;  i >= 0; i--) {
+		if(s[i] == 'b') {
+			cnt++;
 		}
-		else if(max > sub) break;
+		else {
+			ans = (ans + cnt) % mod;
+			cnt = (cnt * 2) % mod;
+		}
 	}
-	cout << save << endl;
+	cout << ans << endl;
 	return 0;
 }
